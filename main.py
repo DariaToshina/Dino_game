@@ -190,15 +190,12 @@ cloud = pygame.transform.scale(cloud, (200, 80))
 
 clouds = Clouds()
 
-death_count = 0
-
 ground = pygame.image.load("assets/images/ground.png")
 ground = pygame.transform.scale(ground, (1200, 20))
 ground_x = 0
 ground_rect = ground.get_rect(center=(640, 400))
 
 state = 'start'
-timer = 60
 dino_lose = False
 record_points = 0
 time = 0
@@ -215,14 +212,12 @@ def menu():
     while run:
         screen.fill("white")
 
-        if death_count == 0:
-            text = game_font.render("Press any Key to Start", True, "black")
-        else:
-            text = game_font.render("Press any Key to Start", True, "black")
-            result_points = game_font.render("You points " + str(points), True, "black")
-            result_points_rect = result_points.get_rect()
-            result_points_rect.center = (screen_width // 2, screen_height + 60)
-            screen.blit(result_points, result_points_rect)
+        text = game_font.render("Press any Key to Start", True, "black")
+        text = game_font.render("Press any Key to Start", True, "black")
+        result_points = game_font.render("You points " + str(points), True, "black")
+        result_points_rect = result_points.get_rect()
+        result_points_rect.center = (screen_width // 2, screen_height + 60)
+        screen.blit(result_points, result_points_rect)
 
         menu_picture = pygame.transform.scale(
             pygame.image.load("assets/images/menu_icon.png"), (430, 380))
@@ -280,6 +275,8 @@ def end_game():
         for event_ in pygame.event.get():
             if event_.type == pygame.QUIT:
                 run = False
+                pygame.quit()
+                sys.exit()
             if event_.type == pygame.KEYDOWN:
                 menu()
 
@@ -367,7 +364,6 @@ def main():
                 state = "game_over"
         else:
             game_speed = 0
-            death_count += 1
             end_game()
 
         time = (time + 0.05) % 512
@@ -393,9 +389,6 @@ def main():
         if ground_x <= -1300:
             ground_x = 0
 
-        if game_lost:
-            end_game()
-
         if len(obstacle) == 0 and game_speed > 0:
             if random.randint(0, 7) in [0, 4]:
                 obstacle.append(Small_cactus(small_cactus))
@@ -411,7 +404,6 @@ def main():
                 pygame.draw.rect(screen, (255, 0, 0), dinosaur.rect, 2)
                 lose_song.play()
 
-                death_count += 1
                 timer_lives += 1
                 if timer_lives == 30:
                     state = "collectivising"
